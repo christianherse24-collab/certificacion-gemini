@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Educator Masterclass & Simulation Suite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gemini: {
+                            50: '#f0f4f9',
+                            100: '#d3e3fd',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#0b57d0',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col overflow-hidden">
+
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md">
+                <span class="material-icons-round text-2xl">school</span>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-900 text-lg">Gemini Certified Educator Masterclass</h1>
+                <p class="text-xs text-slate-500">Simulador interactivo oficial y banco integrado ampliado (Preguntas originales + Nuevas 28 oficiales)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span id="global-badge" class="px-3 py-1 bg-blue-50 text-gemini-700 rounded-full text-xs font-semibold border border-blue-200">
+                Progreso General: <span id="progress-pct">0%</span>
+            </span>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col shrink-0">
+            <div class="p-4 border-b border-slate-100">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Módulos de Estudio</p>
+            </div>
+            <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
+                <button onclick="switchTab('tab-overview')" id="btn-tab-overview" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left bg-gemini-50 text-gemini-700">
+                    <span class="material-icons-round text-xl">dashboard</span>
+                    <span>Ruta y Temario</span>
+                </button>
+                <button onclick="switchTab('tab-prompts')" id="btn-tab-prompts" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">psychology</span>
+                    <span>Laboratorio de Prompts</span>
+                </button>
+                <button onclick="switchTab('tab-gems')" id="btn-tab-gems" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">smart_toy</span>
+                    <span>Creador de Gems</span>
+                </button>
+                <button onclick="switchTab('tab-socratic')" id="btn-tab-socratic" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">support</span>
+                    <span>Simulador Gem Socrático (RAG)</span>
+                </button>
+                <button onclick="switchTab('tab-scope')" id="btn-tab-scope" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">support_agent</span>
+                    <span>Alcance con Estudiantes</span>
+                </button>
+                <button onclick="switchTab('tab-student-access')" id="btn-tab-student-access" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">public</span>
+                    <span>¿Dónde interactúa el estudiante?</span>
+                </button>
+                <button onclick="switchTab('tab-workspace')" id="btn-tab-workspace" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">workspaces</span>
+                    <span>Simulador Workspace</span>
+                </button>
+                <button onclick="switchTab('tab-workspace-setup')" id="btn-tab-workspace-setup" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">tune</span>
+                    <span>Cómo Configurar Workspace (Paso a Paso)</span>
+                </button>
+                <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-slate-100">
+                    <span class="material-icons-round text-xl">quiz</span>
+                    <span>Simulador de Examen Ampliado (Banco Completo)</span>
+                </button>
+            </nav>
+            <div class="p-4 border-t border-slate-100 bg-slate-50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">AI</div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-700">Mentor Académico Gemini</p>
+                        <p class="text-[10px] text-slate-500">Banco de preguntas unificado</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 bg-slate-100 overflow-y-auto p-6">
+            
+            <!-- Tab 1: Overview -->
+            <div id="tab-overview" class="space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-gemini-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Plan de Certificación</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">Tu Ruta hacia la Certificación de Gemini</h2>
+                    <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+                        Este entorno interactivo reúne los 4 pilares evaluados en el examen oficial de Google for Education. Ahora incluye el banco unificado completo (preguntas originales + las nuevas 28 preguntas oficiales basadas en tus capturas).
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex items-start space-x-4">
+                            <div class="p-3 bg-blue-100 text-gemini-700 rounded-lg">
+                                <span class="material-icons-round">psychology</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">1. Ingeniería de Prompts</h3>
+                                <p class="text-xs text-slate-500 mt-1">Estructura correcta (Rol, Contexto, Tarea, Formato) y refinamiento iterativo.</p>
+                                <button onclick="switchTab('tab-prompts')" class="mt-3 text-xs font-semibold text-gemini-600 hover:underline flex items-center">Ir al laboratorio &rarr;</button>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex items-start space-x-4">
+                            <div class="p-3 bg-purple-100 text-purple-700 rounded-lg">
+                                <span class="material-icons-round">smart_toy</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">2. Gems Personalizados</h3>
+                                <p class="text-xs text-slate-500 mt-1">Configuración de asistentes virtuales fijos para tareas repetitivas del aula.</p>
+                                <button onclick="switchTab('tab-gems')" class="mt-3 text-xs font-semibold text-purple-600 hover:underline flex items-center">Crear un Gem &rarr;</button>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex items-start space-x-4">
+                            <div class="p-3 bg-amber-100 text-amber-700 rounded-lg">
+                                <span class="material-icons-round">workspaces</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">3. Ecosistema Workspace</h3>
+                                <p class="text-xs text-slate-500 mt-1">Integración nativa con Gmail, Docs y Drive para gestión administrativa.</p>
+                                <button onclick="switchTab('tab-workspace')" class="mt-3 text-xs font-semibold text-amber-600 hover:underline flex items-center">Simular Workspace &rarr;</button>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex items-start space-x-4">
+                            <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg">
+                                <span class="material-icons-round">verified</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">4. Simulador de Examen Ampliado</h3>
+                                <p class="text-xs text-slate-500 mt-1">Banco completo con las preguntas originales y las 28 nuevas oficiales.</p>
+                                <button onclick="switchTab('tab-quiz')" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline flex items-center">Tomar simulador unificado &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Prompt Engineering Lab -->
+            <div id="tab-prompts" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-gemini-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Laboratorio Práctico</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">Constructor de Prompts Educativos Profesionales</h2>
+                    <p class="text-slate-600 mt-2 text-sm">
+                        En el examen te pedirán identificar o armar prompts óptimos. Utiliza esta herramienta para estructurar los 4 componentes indispensables y probar su desempeño.
+                    </p>
+
+                    <div class="mt-6 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">1. Rol del Modelo (¿Quién es la IA?)</label>
+                            <input type="text" id="p-role" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-gemini-500 outline-none" placeholder="Ej: Actúa como un experto pedagogo universitario especialista en estadística.">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">2. Contexto Específico (¿Para quién y dónde?)</label>
+                            <input type="text" id="p-context" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-gemini-500 outline-none" placeholder="Ej: Para 30 estudiantes de primer año con dificultades en conceptos de desviación estándar.">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">3. Tarea Detallada (¿Qué acción realizará?)</label>
+                            <textarea id="p-task" rows="2" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-gemini-500 outline-none" placeholder="Ej: Diseña una práctica de 15 minutos utilizando datos reales de un supermercado local."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">4. Formato de Salida Deseado</label>
+                            <input type="text" id="p-format" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-gemini-500 outline-none" placeholder="Ej: Entrégalo en formato de tabla con columnas: Paso, Tiempo y Objetivo.">
+                        </div>
+
+                        <button onclick="generatePrompt()" class="w-full py-3 bg-gemini-600 hover:bg-gemini-700 text-white rounded-xl font-semibold text-sm transition shadow-md flex items-center justify-center space-x-2">
+                            <span class="material-icons-round">auto_awesome</span>
+                            <span>Ensamblar Prompt Profesional</span>
+                        </button>
+                    </div>
+
+                    <div id="prompt-output-container" class="mt-6 hidden">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Prompt Resultante Generado:</label>
+                        <div class="p-4 bg-slate-900 text-emerald-400 font-mono text-xs rounded-xl relative">
+                            <pre id="prompt-result-text" class="whitespace-pre-wrap"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Gems Creator -->
+            <div id="tab-gems" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full uppercase tracking-wider">Simulador de Gems</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">Creador de Asistentes Personalizados (Gems)</h2>
+                    <p class="text-slate-600 mt-2 text-sm">
+                        Los Gems permiten automatizar tareas recurrentes en tu docencia sin reescribir prompts largos. Configura uno de prueba a continuación:
+                    </p>
+
+                    <div class="mt-6 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre del Gem</label>
+                            <input type="text" id="gem-name" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm" placeholder="Ej: Revisor de Proyectos de Estadística">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Instrucciones del Sistema (System Instructions)</label>
+                            <textarea id="gem-instructions" rows="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm" placeholder="Define aquí su comportamiento exacto, tono y rúbrica que debe aplicar siempre..."></textarea>
+                        </div>
+                        <button onclick="saveGem()" class="py-3 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold text-sm transition shadow-md">
+                            Guardar y Activar Gem
+                        </button>
+                    </div>
+
+                    <div id="gem-preview" class="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-xl hidden">
+                        <div class="flex items-center space-x-2 text-purple-800 font-bold text-sm">
+                            <span class="material-icons-round">check_circle</span>
+                            <span id="gem-title-preview"></span>
+                        </div>
+                        <p class="text-xs text-purple-600 mt-1">Gem configurado exitosamente y listo para integrarse en tu flujo docente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Socratic Gem Simulator (RAG & Restricciones) -->
+            <div id="tab-socratic" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">Metodología Avanzada de Tutoría</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">Simulador de Gem Socrático con Archivo Oculto (RAG)</h2>
+                    <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+                        Aquí puedes probar exactamente el escenario que mencionas: subir tu documento resuelto (procedimiento maestro) y configurar instrucciones para que el Gem <strong>guíe al estudiante sin revelar jamás las respuestas directas</strong>.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Panel de Configuración Docente -->
+                        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                            <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+                                <span class="material-icons-round text-indigo-600">settings_applications</span>
+                                <span>1. Configuración de tu Archivo y Reglas (Optimizado)</span>
+                            </h3>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Archivo de Resolución (Excel / Documento del Profesor)</label>
+                                <div class="p-3 bg-white border border-slate-300 rounded-xl text-xs font-mono text-slate-600 flex items-center justify-between">
+                                    <span>📊 solucionario_catedratico.xlsx</span>
+                                    <span class="text-emerald-600 font-bold">Cargado ✓</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Instrucciones de Restricción (System Instructions Mejoradas)</label>
+                                <textarea rows="6" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-xs font-mono text-slate-700 outline-none" readonly>Eres el tutor oficial del curso. Tienes acceso exclusivo al archivo de soluciones del profesor (Excel). 
+
+REGLAS DE ORO ABSOLUTAS:
+1. BAJO NINGUNA CIRCUNSTANCIA reveles resultados finales, valores numéricos definitivos ni el documento completo al estudiante.
+2. Aplica estrictamente el método socrático: si el alumno pregunta la respuesta, respóndele con otra pregunta orientadora.
+3. Puedes explicar principios teóricos o guiarlo paso a paso utilizando las fórmulas del archivo, pero sin dar el número final.
+4. Invita al estudiante a que suba una fotografía o su archivo de trabajo para revisarlo paso a paso, pidiéndole que corrija su metodología basándose en los criterios del catedrático.</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Chat de Prueba con el Estudiante -->
+                        <div class="p-6 bg-indigo-50/40 border border-indigo-200 rounded-2xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-indigo-900 text-sm flex items-center space-x-2 mb-3">
+                                    <span class="material-icons-round text-indigo-600">chat</span>
+                                    <span>2. Vista Previa: Interacción del Estudiante</span>
+                                </h3>
+                                
+                                <div id="socratic-chat-box" class="space-y-3 h-56 overflow-y-auto p-3 bg-white border border-indigo-100 rounded-xl text-xs">
+                                    <div class="p-2.5 bg-slate-100 text-slate-700 rounded-lg max-w-[85%]">
+                                        <strong>Estudiante:</strong> Hola, profe. Estoy atascado en el ejercicio 2 sobre la desviación estándar. ¿Me pasas la respuesta final para ver si coincido?
+                                    </div>
+                                    <div class="p-2.5 bg-indigo-100 text-indigo-900 rounded-lg max-w-[85%] ml-auto">
+                                        <strong>Gem Tutor:</strong> ¡Hola! No puedo darte el resultado numérico final, pero con gusto te ayudo a revisarlo. ¿Qué valor obtuviste al aplicar la sumatoria de las diferencias al cuadrado según el paso 2 de la guía metodológica?
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 flex space-x-2">
+                                <input type="text" id="socratic-user-input" class="flex-1 px-3 py-2 border border-slate-300 rounded-xl text-xs outline-none" placeholder="Escribe otra pregunta como estudiante...">
+                                <button onclick="simulateSocraticChat()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Scope with Students -->
+            <div id="tab-scope" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">Guía Oficial de Alcance</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">¿Qué puede y qué NO puede hacer un Gem si interactúa con estudiantes?</h2>
+                    <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+                        Los Gems son excelentes tutores virtuales y asistentes de apoyo, pero tienen límites pedagógicos, éticos y técnicos estrictos que todo docente certificado debe conocer.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Lo que SÍ puede hacer -->
+                        <div class="p-6 bg-emerald-50/50 border border-emerald-200 rounded-2xl space-y-4">
+                            <div class="flex items-center space-x-2 text-emerald-800 font-bold">
+                                <span class="material-icons-round">check_circle</span>
+                                <h3>Lo que SÍ puede hacer un Gem</h3>
+                            </div>
+                            <ul class="space-y-3 text-xs text-slate-700">
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-emerald-600 text-sm mt-0.5">done</span>
+                                    <span><strong>Tutoría socrática:</strong> Guiar al estudiante con preguntas orientadoras sin darle la respuesta directa a un problema o tarea.</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-emerald-600 text-sm mt-0.5">done</span>
+                                    <span><strong>Explicación de conceptos:</strong> Aclarar dudas teóricas complejas adaptándose al nivel de comprensión del alumno (ej. explicar la campana de gauss de forma sencilla).</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-emerald-600 text-sm mt-0.5">done</span>
+                                    <span><strong>Práctica formativa:</strong> Generar ejercicios de práctica interactivos, cuestionarios rápidos y simulaciones de estudio guiadas.</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-emerald-600 text-sm mt-0.5">done</span>
+                                    <span><strong>Disponibilidad 24/7:</strong> Responder consultas fuera del horario de clases con el tono empático y profesional que configures en sus instrucciones.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Lo que NO puede hacer -->
+                        <div class="p-6 bg-rose-50/50 border border-rose-200 rounded-2xl space-y-4">
+                            <div class="flex items-center space-x-2 text-rose-800 font-bold">
+                                <span class="material-icons-round">cancel</span>
+                                <h3>Lo que NO puede hacer un Gem</h3>
+                            </div>
+                            <ul class="space-y-3 text-xs text-slate-700">
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-rose-600 text-sm mt-0.5">close</span>
+                                    <span><strong>Calificación oficial o definitiva:</strong> Un Gem no puede emitir calificaciones vinculantes, actas de notas ni reemplazar el juicio evaluativo del profesor.</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-rose-600 text-sm mt-0.5">close</span>
+                                    <span><strong>Tomar decisiones disciplinarias:</strong> No puede resolver apelaciones de notas, arbitrar conflictos entre alumnos ni validar justificaciones de faltas.</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-rose-600 text-sm mt-0.5">close</span>
+                                    <span><strong>Garantizar 100% de infalibilidad:</strong> Al ser un modelo probabilístico, puede cometer alucinaciones ocasionales, por lo que requiere supervisión humana.</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons-round text-rose-600 text-sm mt-0.5">close</span>
+                                    <span><strong>Sustituir la interacción docente:</strong> No reemplaza la empatía, el acompañamiento emocional y el vínculo humano directo entre profesor y estudiante.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-5 bg-indigo-50 border border-indigo-200 rounded-xl">
+                        <h4 class="font-bold text-indigo-900 text-xs uppercase tracking-wider">💡 Consejo clave para el examen de certificación</h4>
+                        <p class="text-xs text-indigo-700 mt-1">
+                            Si en el examen te preguntan por el rol de un Gem o una IA conversacional con alumnos, la respuesta correcta siempre se orienta a que funcione como un <strong>tutor formativo guiado por principios socráticos</strong> y nunca como un sustituto de la autoridad académica o la evaluación final del profesor.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Student Access Location -->
+            <div id="tab-student-access" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full uppercase tracking-wider">Acceso y Distribución</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">¿Dónde y cómo interactúa el estudiante con tu Gem?</h2>
+                    <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+                        Los Gems no se instalan automáticamente en el LMS de tu universidad (como Blackboard o Moodle) mediante un plugin interno, sino que operan a través del ecosistema de Google y cuentas institucionales autorizadas. Aquí te explicamos los escenarios de acceso:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                            <div>
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center mb-3">
+                                    <span class="material-icons-round">link</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-sm">1. Enlace Compartido Directo</h3>
+                                <p class="text-xs text-slate-500 mt-2">
+                                    Tú generas un enlace web único (URL) desde tu interfaz de Gemini al crear el Gem y se lo compartes a tus alumnos (por correo, WhatsApp o la plataforma del curso).
+                                </p>
+                            </div>
+                            <span class="mt-4 text-[10px] font-bold text-purple-700 bg-purple-100/60 px-2.5 py-1 rounded-full w-max">Método más común</span>
+                        </div>
+
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                            <div>
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-gemini-700 flex items-center justify-center mb-3">
+                                    <span class="material-icons-round">school</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-sm">2. Google Classroom & LMS</h3>
+                                <p class="text-xs text-slate-500 mt-2">
+                                    Colocas el enlace del Gem como un recurso o material interactivo dentro de una tarea en Google Classroom o como un hipervínculo en el gestor de tu universidad.
+                                </p>
+                            </div>
+                            <span class="mt-4 text-[10px] font-bold text-blue-700 bg-blue-100/60 px-2.5 py-1 rounded-full w-max">Integración en aula</span>
+                        </div>
+
+                        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                            <div>
+                                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
+                                    <span class="material-icons-round">admin_panel_settings</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-sm">3. Panel Workspace Admin</h3>
+                                <p class="text-xs text-slate-500 mt-2">
+                                    Si tu institución educativa cuenta con cuentas de Google Workspace for Education Plus, el administrador de TI puede habilitar Gems institucionales globales para todo el dominio.
+                                </p>
+                            </div>
+                            <span class="mt-4 text-[10px] font-bold text-amber-700 bg-amber-100/60 px-2.5 py-1 rounded-full w-max">Nivel Institucional</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-5 bg-purple-50 border border-purple-200 rounded-xl space-y-2">
+                        <h4 class="font-bold text-purple-900 text-xs uppercase tracking-wider">🔒 ¿Qué requisitos técnicos necesita el estudiante?</h4>
+                        <p class="text-xs text-purple-700 leading-relaxed">
+                            Para interactuar con el Gem que creaste, el estudiante simplemente necesita iniciar sesión con su cuenta de Google (personal o institucional, según hayas configurado los permisos de acceso) y hacer clic en el enlace. Se abrirá una interfaz de chat idéntica a Gemini pero guiada estrictamente por las instrucciones, tono y restricciones pedagógicas que tú programaste.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Workspace Simulator -->
+            <div id="tab-workspace" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-wider">Simulador Google Workspace</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-3">Gestión Académica con Gemini integrado</h2>
+                    <p class="text-slate-600 mt-2 text-sm">
+                        Elige una tarea administrativa típica y prueba la asistencia nativa de Gemini en Google Workspace:
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+                        <button onclick="runWorkspaceTask('email')" class="p-4 border rounded-xl hover:border-amber-500 hover:bg-amber-50/50 text-left transition">
+                            <span class="material-icons-round text-amber-600 mb-2">mail</span>
+                            <h4 class="font-bold text-sm text-slate-800">Redactar Correo Institucional</h4>
+                            <p class="text-xs text-slate-500 mt-1">Aviso de entrega de notas finales.</p>
+                        </button>
+                        <button onclick="runWorkspaceTask('summary')" class="p-4 border rounded-xl hover:border-amber-500 hover:bg-amber-50/50 text-left transition">
+                            <span class="material-icons-round text-amber-600 mb-2">description</span>
+                            <h4 class="font-bold text-sm text-slate-800">Resumir Acta en Drive</h4>
+                            <p class="text-xs text-slate-500 mt-1">Reunión de comité académico.</p>
+                        </button>
+                        <button onclick="runWorkspaceTask('rubric')" class="p-4 border rounded-xl hover:border-amber-500 hover:bg-amber-50/50 text-left transition">
+                            <span class="material-icons-round text-amber-600 mb-2">table_chart</span>
+                            <h4 class="font-bold text-sm text-slate-800">Generar Rúbrica en Docs</h4>
+                            <p class="text-xs text-slate-500 mt-1">Evaluación de proyectos muestrales.</p>
+                        </button>
+                    </div>
+
+                    <div id="workspace-result-box" class="mt-6 p-5 bg-slate-950 text-slate-200 rounded-xl text-xs font-mono hidden">
+                        <p class="text-amber-400 font-bold mb-2">// Respuesta generada por Gemini Workspace:</p>
+                        <div id="workspace-text-content" class="whitespace-pre-line leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Workspace Detailed Setup Guide -->
+            <div id="tab-workspace-setup" class="hidden space-y-6 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                    <div>
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-wider">Guía Definitiva Paso a Paso</span>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-3">¿Cómo se configura y utiliza Gemini en Google Workspace?</h2>
+                        <p class="text-slate-600 mt-2 text-sm leading-relaxed">
+                            A diferencia de un chat web independiente, Gemini en Google Workspace viene integrado de forma nativa en cada aplicación (Gmail, Docs, Drive, Sheets). Aquí te explicamos detalladamente los requisitos de activación institucional y cómo invocarlo en tu día a día docente.
+                        </p>
+                    </div>
+
+                    <!-- Paso 1: Requisito de Activación -->
+                    <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-3 text-slate-900 font-bold text-base">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">1</div>
+                            <h3>Requisito de Activación Institucional (Licenciamiento)</h3>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Gemini en Workspace no está disponible en cuentas de Gmail gratuitas estándar (`@gmail.com`) para funciones avanzadas de redacción integrada, sino que requiere una cuenta institucional administrada bajo planes como <strong>Google Workspace for Education Plus</strong> o complementos de Gemini Education.
+                        </p>
+                        <div class="p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700">
+                            <strong>Acción del Administrador de TI:</strong> El departamento de sistemas de tu institución debe asignar la licencia de Gemini a tu correo institucional. Una vez asignada, aparecerá automáticamente el icono del Destello de Gemini (<span class="material-icons-round text-amber-600 align-middle text-sm">auto_awesome</span>) en tus herramientas.
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Cómo usarlo en Google Docs -->
+                    <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-3 text-slate-900 font-bold text-base">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">2</div>
+                            <h3>Cómo configurarlo y usarlo en Google Docs (Creación de Rúbricas y Temarios)</h3>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700 leading-relaxed">
+                            <li>Abre un documento en blanco en <a href="https://docs.google.com" target="_blank" class="text-blue-600 underline">Google Docs</a> con tu sesión institucional.</li>
+                            <li>En cualquier línea del documento, haz clic en el icono <strong>"Ayúdame a escribir"</strong> (<span class="material-icons-round text-amber-600 align-middle text-sm">edit_note</span>) que aparece al margen izquierdo, o presiona las teclas <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-mono">Tab</kbd> / escribe <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-mono">@gemini</kbd>.</li>
+                            <li>Escribe tu instrucción pedagógica (ej. <em>"Redacta una rúbrica de 4 niveles para evaluar un proyecto estadístico universitario"</em>).</li>
+                            <li>Haz clic en <strong>Generar</strong>. Si el resultado te gusta, haz clic en <strong>Insertar</strong> para que pase a formar parte oficial de tu documento. También puedes hacer clic en "Refinar" para pedirle que lo haga más formal o más breve.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Paso 3: Cómo usarlo en Gmail -->
+                    <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-3 text-slate-900 font-bold text-base">
+                            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-sm font-bold">3</div>
+                            <h3>Cómo usarlo en Gmail (Redacción de Correos Masivos o Avisos)</h3>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700 leading-relaxed">
+                            <li>Haz clic en <strong>"Redactar"</strong> en Gmail.</li>
+                            <div>En la parte inferior de la ventana de redacción, busca el botón <strong>"Ayúdame a redactar"</strong> (<span class="material-icons-round text-amber-600 align-middle text-sm">auto_awesome</span>).</div>
+                            <li>Escribe un aviso rápido (ej. <em>"Avisa a los alumnos que las notas del examen parcial ya están en el sistema y que habrá revisión el próximo martes a las 4 PM"</em>).</li>
+                            <li>Haz clic en <strong>Crear</strong>. Gemini redactará un correo formal, cortés y completo. Puedes elegir la opción "Formal" o "Más conciso" antes de insertar el texto y presionar Enviar.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Paso 4: Cómo usarlo en Google Drive -->
+                    <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-3 text-slate-900 font-bold text-base">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">4</div>
+                            <h3>Cómo usarlo en Google Drive (Resumen de Múltiples Archivos y Actas)</h3>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700 leading-relaxed">
+                            <li>Entra a tu <a href="https://drive.google.com" target="_blank" class="text-blue-600 underline">Google Drive</a> institucional.</li>
+                            <li>Selecciona un documento largo, acta de reunión en PDF o múltiples archivos de tu carpeta de cátedra.</li>
+                            <li>Haz clic en el icono lateral de <strong>Gemini en el panel lateral derecho</strong> (<span class="material-icons-round text-amber-600 align-middle text-sm">smart_toy</span>).</li>
+                            <li>Escribe una pregunta global (ej. <em>"Haz un resumen de los 3 acuerdos principales de esta acta y lista las tareas pendientes asignadas a los catedráticos"</em>). Gemini leerá el contenido almacenado en tu Drive y te entregará las conclusiones instantáneamente sin que tengas que leer todo el documento de 50 páginas.</li>
+                        </ol>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider">💡 Tip clave para el examen de certificación</h4>
+                        <p class="text-xs text-amber-700 leading-relaxed">
+                            Recuerda que en el examen oficial de Google for Education, las preguntas sobre Workspace evalúan tu capacidad de <strong>ahorro de tiempo administrativo</strong> y la comprensión de que Gemini opera de manera <em>nativa</em> en el ecosistema, evitando la fricción de copiar y pegar textos entre pestañas externas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Quiz Simulator (Unifying All Questions: Original Bank + New 28 Official Questions) -->
+            <div id="tab-quiz" class="hidden space-y-6 max-w-2xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider">Simulador de Examen Unificado (Banco Completo)</span>
+                        <span id="quiz-counter" class="text-xs font-bold text-slate-400">Pregunta 1 de N</span>
+                    </div>
+
+                    <h3 id="quiz-question" class="text-lg font-bold text-slate-900 mt-4"></h3>
+
+                    <div id="quiz-options" class="mt-6 space-y-3">
+                        <!-- Opciones inyectadas por JS -->
+                    </div>
+
+                    <div id="quiz-feedback" class="mt-6 p-4 rounded-xl text-xs font-medium hidden"></div>
+
+                    <div class="mt-6 flex justify-between items-center">
+                        <button onclick="skipQuizQuestion()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
+                            Saltar / Revisar después
+                        </button>
+                        <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition">
+                            Siguiente Pregunta &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            ['tab-overview', 'tab-prompts', 'tab-gems', 'tab-socratic', 'tab-scope', 'tab-student-access', 'tab-workspace', 'tab-workspace-setup', 'tab-quiz'].forEach(id => {
+                const tabEl = document.getElementById(id);
+                if(tabEl) tabEl.classList.add('hidden');
+                const btn = document.getElementById('btn-' + id);
+                if(btn) {
+                    btn.classList.remove('bg-gemini-50', 'text-gemini-700');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+                }
+            });
+            const activeTab = document.getElementById(tabId);
+            if(activeTab) activeTab.classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                activeBtn.classList.add('bg-gemini-50', 'text-gemini-700');
+            }
+        }
+
+        // Prompt Builder Logic
+        function generatePrompt() {
+            const role = document.getElementById('p-role').value || "Actúa como experto pedagogo.";
+            const context = document.getElementById('p-context').value || "Para estudiantes universitarios.";
+            const task = document.getElementById('p-task').value || "Diseña una actividad práctica.";
+            const format = document.getElementById('p-format').value || "Presenta en formato claro.";
+
+            const finalPrompt = `${role}\nContexto: ${context}\nTarea específica: ${task}\nFormato de salida requerido: ${format}`;
+            document.getElementById('prompt-result-text').textContent = finalPrompt;
+            document.getElementById('prompt-output-container').classList.remove('hidden');
+        }
+
+        // Gems Creator Logic
+        function saveGem() {
+            const name = document.getElementById('gem-name').value;
+            if(!name) return alert('Por favor ingresa un nombre para tu Gem.');
+            document.getElementById('gem-title-preview').textContent = `Gem Activado: "${name}"`;
+            document.getElementById('gem-preview').classList.remove('hidden');
+        }
+
+        // Socratic Chat Simulator Logic
+        function simulateSocraticChat() {
+            const input = document.getElementById('socratic-user-input');
+            const chatBox = document.getElementById('socratic-chat-box');
+            if(!input.value.trim()) return;
+
+            const userText = input.value;
+            chatBox.innerHTML += `<div class="p-2.5 bg-slate-100 text-slate-700 rounded-lg max-w-[85%]"><strong>Estudiante:</strong> ${userText}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                chatBox.innerHTML += `<div class="p-2.5 bg-indigo-100 text-indigo-900 rounded-lg max-w-[85%] ml-auto"><strong>Gem Tutor:</strong> Excelente consulta. Recuerda que el procedimiento indicado en la guía del profesor requiere primero aislar la variable independiente. ¿Qué fórmula de tu cuaderno crees que deberíamos aplicar en este punto sin saltarnos los pasos previos?</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
+        }
+
+        // Workspace Simulation Logic
+        function runWorkspaceTask(type) {
+            const box = document.getElementById('workspace-result-box');
+            const content = document.getElementById('workspace-text-content');
+            box.classList.remove('hidden');
+
+            if(type === 'email') {
+                content.textContent = "De: Docente Titular\nPara: Estudiantes del curso\nAsunto: Publicación de calificaciones finales - Estadística\n\nEstimados estudiantes, les informo que las notas finales de la práctica de campo en Boca del Monte han sido cargadas en el sistema. Pueden revisar sus detalles...";
+            } else if(type === 'summary') {
+                content.textContent = "RESUMEN DE ACTA ACADÉMICA (Generado por Gemini en Drive):\n- Asistentes: 5 catedráticos.\n- Acuerdos principales: Aprobación de la rúbrica unificada para proyectos estadísticos.\n- Próxima revisión: Jueves a las 10:00 AM.";
+            } else {
+                content.textContent = "RÚBRICA DE EVALUACIÓN (Generada en Google Docs):\n1. Planteamiento de hipótesis (20%)\n2. Aplicación correcta del Teorema del Límite Central (30%)\n3. Interpretación de la Campana de Gauss (30%)\n4. Conclusiones analíticas (20%)";
+            }
+        }
+
+        // UNIFIED QUIZ BANK: Original Questions + New 28 Official Questions
+        const quizQuestions = [
+            // --- NUEVAS 28 PREGUNTAS OFICIALES (BASADAS EN TUS CAPTURAS) ---
+            {
+                q: "¿Cuál de las siguientes opciones define con mayor precisión una 'alucinación' de la IA generativa?",
+                options: [
+                    "Una respuesta que se presenta con un alto nivel de confianza, pero que es incorrecta, no tiene sentido o es completamente inventada, como inventar una fuente o tergiversar datos.",
+                    "Un resultado que es correcto desde el punto de vista fáctico, pero no incluye matices importantes ni hallazgos contradictorios publicados recientemente.",
+                    "Un resultado que muestra parcialidad o prejuicio sistémico derivado de los datos de entrenamiento del modelo.",
+                    "Una respuesta en la que el modelo de IA se niega a procesar una instrucción debido a las medidas de protección éticas o de seguridad integradas."
+                ],
+                correct: 0,
+                explanation: "Correcto. Una alucinación ocurre cuando el modelo genera información errónea o ficticia presentándola con total seguridad."
+            },
+            {
+                q: "¿En cuál de las siguientes opciones se describe mejor una estrategia 'enfocada en el proceso' para mitigar las conductas académicas inapropiadas asociadas a la IA?",
+                options: [
+                    "Crear una política estricta relacionada con el plan de estudios que exija una calificación reprobatoria automática para cualquier entrega de los estudiantes que contenga texto generado por IA.",
+                    "Trasladar todas las evaluaciones importantes a exámenes presenciales supervisados para eliminar la posibilidad de usar la IA durante las pruebas.",
+                    "Rediseñar las tareas para que los estudiantes envíen artefactos intermedios, como bibliografías etiquetadas, historiales de instrucciones y reflexiones sobre su proceso de investigación y escritura.",
+                    "Usar software de detección de IA como mecanismo principal para identificar y sancionar a los estudiantes que usan la IA generativa de forma inapropiada."
+                ],
+                correct: 2,
+                explanation: "Correcto. Evaluar el proceso mediante entregas parciales y reflexiones fomenta la autoría y reduce el fraude."
+            },
+            {
+                q: "Para incluir contexto personal en un informe de investigación de Deep Research, ¿los profesores deben copiar y pegar manualmente texto de sus documentos en la instrucción para Gemini?",
+                options: [
+                    "Verdadero. La única forma de incluir contexto personal en un informe de Deep Research es copiar y pegar texto en la instrucción de Gemini.",
+                    "Falso. Deep Research puede extraer contexto directamente de fuentes seleccionadas, como Gmail, Drive y Chat, o los profesores pueden subir archivos."
+                ],
+                correct: 1,
+                explanation: "Correcto. Las herramientas avanzadas permiten conectar directamente con el ecosistema de Workspace o subir archivos de referencia."
+            },
+            {
+                q: "Un profesor quiere enseñarles a los estudiantes a abordar los textos generados por IA con escepticismo y de forma crítica. ¿Cuál de las siguientes estrategias sería la opción pedagógica más eficaz para lograrlo?",
+                options: [
+                    "Prohibir todas las herramientas de IA para obligar a los estudiantes a usar bases de datos tradicionales de bibliotecas.",
+                    "Diseñar una tarea 'integrada en la IA' en la que los estudiantes deban usar Gemini para investigar y, luego, enviar un 'informe de verificación' que proporcione una fuente primaria para cada afirmación generada por IA.",
+                    "Exigir que los estudiantes usen una herramienta de detección de IA en sus propios trabajos antes de enviarlos.",
+                    "Dar una clase sobre la historia y las causas técnicas de las alucinaciones de la IA."
+                ],
+                correct: 1,
+                explanation: "Correcto. Exigir la contrastación con fuentes primarias obliga al alumno a verificar activamente la veracidad de la IA."
+            },
+            {
+                q: "¿Cuál es la estructura recomendada al redactar un prompt pedagógico avanzado para obtener una planeación de clase óptima?",
+                options: [
+                    "Escribir una instrucción vaga para que la IA adivine lo que necesitas.",
+                    "Rol, Contexto específico, Tarea detallada y Formato de salida deseado.",
+                    "Únicamente el nombre de la materia y el tema en una sola línea."
+                ],
+                correct: 1,
+                explanation: "Correcto. Los 4 componentes aseguran precisión y resultados adaptados a la audiencia docente."
+            },
+            {
+                q: "En el uso cotidiano de Gemini para la gestión docente, ¿qué finalidad pedagógica y de eficiencia tiene el concepto de 'iteración'?",
+                options: [
+                    "Reiniciar la sesión cada 5 minutos para borrar la caché.",
+                    "Guiar al modelo paso a paso mediante indicaciones adicionales para ajustar el tono, profundidad y formato.",
+                    "Forzar al sistema a buscar únicamente en bases de datos offline."
+                ],
+                correct: 1,
+                explanation: "Correcto. La iteración conversacional permite refinar progresivamente la salida del modelo."
+            },
+            {
+                q: "Un profesor necesita automatizar la redacción semanal de retroalimentaciones siguiendo siempre los mismos criterios institucionales. ¿Qué herramienta debe usar?",
+                options: [
+                    "Un Gem personalizado con instrucciones y rúbricas predefinidas.",
+                    "Una hoja de cálculo sin IA.",
+                    "El bloc de notas básico del sistema."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los Gems almacenan instrucciones fijas para tareas recurrentes."
+            },
+            {
+                q: "¿Qué implicación tiene la naturaleza probabilística de un LLM como Gemini en el ámbito académico?",
+                options: [
+                    "Que calcula secuencias basándose en patrones y requiere siempre supervisión crítica del docente.",
+                    "Que es una enciclopedia matemática infalible que nunca comete errores.",
+                    "Que genera respuestas aleatorias sin coherencia lógica."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los modelos probabilísticos requieren el filtro crítico del especialista."
+            },
+            {
+                q: "Cuando un docente utiliza Gemini integrado en Google Workspace (Gmail, Drive, Docs), ¿qué ventaja operativa clave obtiene?",
+                options: [
+                    "Optimizar su tiempo administrativo operando de forma nativa en sus aplicaciones diarias sin cambiar de contexto.",
+                    "Imprimir automáticamente actas en formato físico.",
+                    "Evitar conectarse a internet durante sus clases."
+                ],
+                correct: 0,
+                explanation: "Correcto. La integración nativa en Workspace agiliza el flujo diario del profesor."
+            },
+            {
+                q: "¿Qué límite estricto tiene un Gem al interactuar directamente con estudiantes en el aula?",
+                options: [
+                    "No puede emitir calificaciones oficiales definitivas ni reemplazar el juicio evaluativo del profesor.",
+                    "No puede responder fuera del horario de oficina.",
+                    "No puede procesar texto en formato digital."
+                ],
+                correct: 0,
+                explanation: "Correcto. La evaluación oficial y el juicio académico corresponden exclusivamente al docente."
+            },
+            {
+                q: "¿Cómo se distribuye típicamente un Gem creado por un profesor a sus estudiantes?",
+                options: [
+                    "Mediante un enlace web único (URL) compartido directamente o integrado en Google Classroom.",
+                    "Mediante un archivo ejecutable .exe descargable.",
+                    "Mediante un plugin instalado en el servidor físico de la universidad."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los Gems se comparten mediante enlaces directos o recursos en plataformas educativas."
+            },
+            {
+                q: "¿Qué requisito técnico es indispensable para utilizar las funciones avanzadas de Gemini integrado en Google Workspace (Gmail, Docs, Drive)?",
+                options: [
+                    "Contar con una cuenta institucional administrada bajo planes de Google Workspace for Education con licencia de Gemini.",
+                    "Tener una cuenta gratuita personal de @gmail.com con almacenamiento superior a 15GB.",
+                    "Instalar un software antivirus especializado en inteligencia artificial."
+                ],
+                correct: 0,
+                explanation: "Correcto. Las herramientas integradas de Workspace requieren licenciamiento institucional."
+            },
+            {
+                q: "Si un profesor desea redactar un correo masivo avisando sobre calificaciones en Gmail usando Gemini, ¿qué botón debe pulsar?",
+                options: [
+                    "El botón 'Ayúdame a redactar' con el icono del destello de Gemini en la ventana inferior.",
+                    "El botón de 'Enviar' inmediato.",
+                    "La opción de 'Configurar filtros de spam'."
+                ],
+                correct: 0,
+                explanation: "Correcto. 'Ayúdame a redactar' es la función nativa en Gmail."
+            },
+            {
+                q: "En Google Docs, ¿cómo se invoca rápidamente al asistente de Gemini para generar contenido?",
+                options: [
+                    "Haciendo clic en 'Ayúdame a escribir' en el margen izquierdo o escribiendo '@gemini' en el documento.",
+                    "Cerrando y volviendo a abrir la pestaña del navegador.",
+                    "Copiando texto desde un bloc de notas externo."
+                ],
+                correct: 0,
+                explanation: "Correcto. El icono de asistencia o el comando '@gemini' despliega la IA en Docs."
+            },
+            {
+                q: "¿Qué ventaja ofrece utilizar Gemini en Google Drive frente a leer un documento PDF de 100 páginas de actas académicas?",
+                options: [
+                    "Seleccionar el archivo y pedirle directamente al panel lateral de Gemini un resumen de acuerdos y tareas pendientes.",
+                    "Imprimir el documento completo para buscar con marcador fosforescente.",
+                    "Traducirlo obligatoriamente a tres idiomas antes de leerlo."
+                ],
+                correct: 0,
+                explanation: "Correcto. El panel lateral de Drive permite consultar y resumir documentos al instante."
+            },
+            {
+                q: "Cuando un alumno le pide la respuesta final de un problema a un Gem Socrático configurado correctamente, ¿cómo debe responder el Gem?",
+                options: [
+                    "Haciendo otra pregunta orientadora que guíe al estudiante en el procedimiento sin revelarle el resultado numérico.",
+                    "Dándole inmediatamente la respuesta correcta con todos los decimales.",
+                    "Cerrando la sesión de chat por infracción de normas."
+                ],
+                correct: 0,
+                explanation: "Correcto. El enfoque socrático guía mediante preguntas en lugar de dar respuestas directas."
+            },
+            {
+                q: "¿Cuál de las siguientes acciones representa una buena práctica al utilizar imágenes de gráficos estadísticos en Gemini para analizarlos con los alumnos?",
+                options: [
+                    "Subir la captura del gráfico y pedirle al modelo que desglose los pasos metodológicos para interpretarlo.",
+                    "Asumir que la IA puede interpretar gráficos con 100% de perfección sin contraste humano.",
+                    "Evitar el uso de imágenes ya que Gemini es un modelo exclusivamente de texto."
+                ],
+                correct: 0,
+                explanation: "Correcto. La multimodalidad permite analizar imágenes y guiar el desglose analítico."
+            },
+            {
+                q: "En la evaluación del diseño instruccional, ¿por qué es importante evitar prompts excesivamente genéricos como 'haz una clase de matemáticas'?",
+                options: [
+                    "Porque la IA generará contenidos genéricos sin ajustarse a las necesidades específicas de nivel, tiempo y contexto de los alumnos.",
+                    "Porque el sistema se bloqueará por falta de memoria.",
+                    "Porque violates los términos de privacidad de Google."
+                ],
+                correct: 0,
+                explanation: "Correcto. La falta de contexto y restricciones produces respuestas poco útiles."
+            },
+            {
+                q: "¿Qué función cumple el campo de 'Instrucciones del Sistema' (System Instructions) al crear un Gem personalizado?",
+                options: [
+                    "Definir de forma permanente el rol, tono, restricciones y directrices pedagógicas que el Gem respetará en cada interacción.",
+                    "Establecer la contraseña de acceso para los alumnos.",
+                    "Configurar el fondo de pantalla del chat."
+                ],
+                correct: 0,
+                explanation: "Correcto. Las system instructions moldean la personalidad y límites del asistente."
+            },
+            {
+                q: "Si un profesor detecta que un Gem ha proporcionado una explicación teórica con un error menor, ¿cuál es el procedimiento adecuado?",
+                options: [
+                    "Aplicar el criterio docente, corregir el planteamiento mediante iteración o ajustar las instrucciones del sistema del Gem.",
+                    "Desinstalar Google Chrome de todos los equipos.",
+                    "Prohibir el uso de internet en la facultad."
+                ],
+                correct: 0,
+                explanation: "Correcto. La supervisión docente y el ajuste iterativo son fundamentales."
+            },
+            {
+                q: "¿Qué tipo de tareas administrativas consume más tiempo a los docentes y puede ser optimizada significativamente con Gemini en Workspace?",
+                options: [
+                    "Redacción de correos institucionales, síntesis de actas y estructuración de borradores de rúbricas.",
+                    "El mantenimiento físico de los servidores de la universidad.",
+                    "La impresión manual de credenciales estudiantiles."
+                ],
+                correct: 0,
+                explanation: "Correcto. La redacción y síntesis documental son fortalezas clave de Workspace."
+            },
+            {
+                q: "¿Por qué se recomienda estructurar las respuestas de los estudiantes en entregas parciales (artefactos intermedios) frente a la irrupción de la IA?",
+                options: [
+                    "Para evidenciar el pensamiento crítico, la evolución de hipótesis y el proceso de construcción del conocimiento.",
+                    "Para incrementar la cantidad de papel impreso en la universidad.",
+                    "Para evitar que usen computadoras."
+                ],
+                correct: 0,
+                explanation: "Correcto. Evaluar artefactos intermedios asegura la autoría y el rigor procesual."
+            },
+            {
+                q: "¿Qué ventaja tiene la multimodalidad nativa de Gemini al momento de revisar tareas enviadas en formato visual por los estudiantes?",
+                options: [
+                    "Permite procesar esquemas, diagramas y capturas de código de manera simultánea al texto explicativo.",
+                    "Convierte automáticamente cualquier imagen en un archivo de audio.",
+                    "Elimina la necesidad de conexión a internet."
+                ],
+                correct: 0,
+                explanation: "Correcto. La comprensión multimodal abarca texto, gráficos e imágenes complejas."
+            },
+            {
+                q: "¿Qué debe hacer un profesor si un alumno argumenta que 'la IA le dijo que esa era la respuesta correcta' en un ejercicio evaluado?",
+                options: [
+                    "Recordar al estudiante que la IA es una herramienta de apoyo probabilística y que la responsabilidad de la verificación fáctica recae en el alumno.",
+                    "Otorgarle la nota máxima automáticamente por haber usado tecnología.",
+                    "Expulsar al alumno del curso."
+                ],
+                correct: 0,
+                explanation: "Correcto. El estudiante es responsable de verificar y contrastar los resultados."
+            },
+            {
+                q: "¿Cómo contribuye el uso de Gems personalizados a la equidad y consistencia en la atención de consultas fuera de horario?",
+                options: [
+                    "Proporcionando respuestas alineadas estrictamente al material de la cátedra y con un tono pedagógico uniforme para todos los alumnos.",
+                    "Haciendo que el profesor trabaje 24 horas sin descansar.",
+                    "Sustituyendo por completo las clases presenciales."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los Gems estandarizan el apoyo formativo institucional fuera de clase."
+            },
+            {
+                q: "¿Cuál de los siguientes enunciados describe correctamente el concepto de 'RAG' (Retrieval-Augmented Generation) aplicado a un Gem docente?",
+                options: [
+                    "El Gem complementa sus respuestas consultando documentos específicos subidos por el profesor (como solucionarios o guías).",
+                    "El Gem se desconecta de internet para funcionar más rápido.",
+                    "El Gem borra su memoria cada vez que se cierra la pestaña."
+                ],
+                correct: 0,
+                explanation: "Correcto. RAG permite al modelo fundamentar sus respuestas en los documentos y archivos suministrados por el catedrático."
+            },
+            {
+                q: "En el contexto de la certificación oficial, cuál es la postura recomendada frente a los detectores automatizados de texto por IA?",
+                options: [
+                    "Utilizarlos con suma cautela y no considerarlos infalibles, priorizando el diseño de actividades basadas en el proceso y la verificación.",
+                    "Confiar ciegamente en ellos para reprobar automáticamente a los alumnos.",
+                    "Ignorarlos por completo ya que son 100% inútiles."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los detectores tienen tasas de error y el diseño metodológico es la mejor defensa."
+            },
+            {
+                q: "¿Qué beneficio principal aporta la interfaz unificada de Gemini en el ámbito de la educación superior?",
+                options: [
+                    "Centralizar la investigación profunda, la creación de materiales, la programación y el análisis de documentos en un solo asistente inteligente.",
+                    "Ocupar más espacio de almacenamiento en el disco duro.",
+                    "Complicar la navegación con múltiples menús innecesarios."
+                ],
+                correct: 0,
+                explanation: "Correcto. La unificación simplifica el flujo de trabajo del docente universitario."
+            },
+
+            // --- BANCO ORIGINAL INCLUIDO Y PRESERVADO ---
+            {
+                q: "¿Cuál es la definición fundamental de un Modelo de Lenguaje Grande (LLM) como Gemini en el contexto educativo?",
+                options: [
+                    "Un sistema entrenado con grandes volúmenes de texto para reconocer patrones lingüísticos y generar respuestas coherentes.",
+                    "Una base de datos estática de libros de texto escaneados.",
+                    "Un software exclusivamente diseñado para calcular estadísticas con bases de datos relacionales."
+                ],
+                correct: 0,
+                explanation: "Correcto. Los LLM procesan patrones estadísticos en grandes corpus de texto para generar lenguaje natural."
+            },
+            {
+                q: "¿Qué característica distingue principalmente a Gemini como un modelo multimodal frente a los modelos basados únicamente en texto?",
+                options: [
+                    "La capacidad nativa de procesar y comprender simultáneamente texto, imágenes, código y documentos.",
+                    "La capacidad de conectarse físicamente a impresoras y proyectores en el aula.",
+                    "La obligación de trabajar sin conexión a internet."
+                ],
+                correct: 0,
+                explanation: "Correcto. La multimodalidad permite interpretar diversos formatos de entrada de manera integrada."
+            },
+            {
+                q: "En el contexto de la Ingeniería de Prompts (Prompt Engineering) para educadores, ¿qué elemento clave debe contener un buen mensaje para obtener una planeación de clase óptima?",
+                options: [
+                    "Rol, contexto específico, tarea detallada y formato de salida deseado.",
+                    "Únicamente el nombre del profesor y la fecha actual.",
+                    "Palabras clave aleatorias sin orden lógico."
+                ],
+                correct: 0,
+                explanation: "Correcto. Estos 4 componentes aseguran que la IA entienda el rol, la audiencia y la estructura esperada."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let scoreCount = 0;
+
+        function loadQuizQuestion() {
+            const qData = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-counter').textContent = `Pregunta ${currentQuizIndex + 1} de ${quizQuestions.length}`;
+            document.getElementById('quiz-question').textContent = qData.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-4 text-left border border-slate-200 rounded-xl text-sm font-medium hover:border-gemini-500 hover:bg-blue-50/30 transition flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span><span class="material-icons-round text-slate-300">radio_button_unchecked</span>`;
+                btn.onclick = () => selectQuizOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectQuizOption(selectedIdx, btnElement) {
+            const qData = quizQuestions[currentQuizIndex];
+            const allBtns = document.getElementById('quiz-options').children;
+            
+            for(let i=0; i<allBtns.length; i++) {
+                allBtns[i].disabled = true;
+                if(i === qData.correct) {
+                    allBtns[i].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+                } else if(i === selectedIdx) {
+                    allBtns[i].classList.add('border-rose-500', 'bg-rose-50', 'text-rose-800');
+                }
+            }
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            
+            if(selectedIdx === qData.correct) {
+                feedback.className = "mt-6 p-4 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedback.innerHTML = `<strong>¡Correcto!</strong> ${qData.explanation}`;
+                scoreCount++;
+            } else {
+                feedback.className = "mt-6 p-4 rounded-xl text-xs font-medium bg-rose-50 text-rose-800 border border-rose-200";
+                feedback.innerHTML = `<strong>Incorrecto.</strong> ${qData.explanation}`;
+            }
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+            updateGlobalProgress();
+        }
+
+        function skipQuizQuestion() {
+            currentQuizIndex = (currentQuizIndex + 1) % quizQuestions.length;
+            loadQuizQuestion();
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if(currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                const quizBox = document.getElementById('tab-quiz').firstElementChild;
+                quizBox.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold mb-4">
+                            <span class="material-icons-round text-4xl">emoji_events</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">¡Simulacro de Examen Concluido!</h3>
+                        <p class="text-sm text-slate-600 mt-2">Tu puntaje final es de <strong>${scoreCount} de ${quizQuestions.length}</strong> aciertos.</p>
+                        <p class="text-xs text-slate-500 mt-1">Has completado todo el banco unificado que incluye las preguntas originales y las 28 preguntas oficiales.</p>
+                        <button onclick="resetQuiz()" class="mt-6 px-6 py-2.5 bg-gemini-600 text-white rounded-xl text-sm font-semibold hover:bg-gemini-700 transition">Reiniciar Simulacro</button>
+                    </div>
+                `;
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            scoreCount = 0;
+            loadQuizQuestion();
+        }
+
+        function updateGlobalProgress() {
+            const pct = Math.round((scoreCount / quizQuestions.length) * 100);
+            document.getElementById('progress-pct').textContent = pct + '%';
+        }
+
+        window.onload = function() {
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>
